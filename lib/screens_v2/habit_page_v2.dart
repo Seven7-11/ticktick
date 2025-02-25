@@ -4,6 +4,7 @@ import 'activity_screens/walk_page.dart';
 import 'activity_screens/workout_page.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/accont_page.dart';
+import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Import หน้า Add Habit
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;
@@ -30,7 +31,7 @@ class HabitPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("Activity", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Expanded(
               child: ListView(
@@ -60,7 +61,12 @@ class HabitPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () { // ✅ กดปุ่ม + แล้วไปที่ Add Habit Page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddButtonPage()),
+          );
+        },
         backgroundColor: Colors.black,
         child: const Icon(Icons.add, color: Colors.white, size: 30),
       ),
@@ -81,12 +87,12 @@ class HabitPage extends StatelessWidget {
           elevation: 0,
           currentIndex: 0,
           onTap: (index) {
-            if (index == 1) {
+            if (index == 1) { // ✅ กด "Notifications" ไปหน้า Notification
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
-            } else if (index == 2) {
+            } else if (index == 2) { // ✅ กด "Person" ไปหน้า Account
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AccountScreen()),
