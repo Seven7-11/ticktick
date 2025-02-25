@@ -11,12 +11,7 @@ class AddButtonPage extends StatefulWidget {
 }
 
 class _AddButtonPageState extends State<AddButtonPage> {
-  List<Map<String, dynamic>> habits = [
-    {"icon": Icons.directions_run, "title": "Swim", "progress": 2.5, "total": 5.0, "unit": "hr"},
-    {"icon": Icons.fitness_center, "title": "Yoga", "progress": 2.5, "total": 5.0, "unit": "hr"},
-    {"icon": Icons.directions_walk, "title": "Food", "progress": 2.5, "total": 5.0, "unit": "cal"},
-    {"icon": Icons.fitness_center, "title": "Drunk", "progress": 2.5, "total": 5.0, "unit": "ml"},
-  ];
+  List<Map<String, dynamic>> habits = []; // ✅ เริ่มต้นไม่มี Habit
 
   // ✅ ฟังก์ชันเพิ่ม Habit ใหม่ลงใน List
   void _addHabit(String title) {
@@ -24,10 +19,46 @@ class _AddButtonPageState extends State<AddButtonPage> {
       habits.add({
         "icon": Icons.directions_run,
         "title": title,
-        "progress": 0.0, // ✅ เปลี่ยนเป็น double
-        "total": 10.0, // ✅ เปลี่ยนเป็น double
+        "progress": 0.0,
+        "total": 10.0,
         "unit": "times",
       });
+    });
+  }
+
+  // ✅ ฟังก์ชันแสดง Dialog ยืนยันการลบ
+  void _confirmDeleteHabit(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("ยืนยันการลบ"),
+          content: const Text("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // ❌ ปิด Dialog ถ้ากด "ยกเลิก"
+              },
+              child: const Text("ยกเลิก"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _deleteHabit(index); // ✅ ลบ Habit
+                Navigator.pop(context); // ✅ ปิด Dialog หลังลบ
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text("ลบ", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ✅ ฟังก์ชันลบ Habit
+  void _deleteHabit(int index) {
+    setState(() {
+      habits.removeAt(index);
     });
   }
 
@@ -38,9 +69,9 @@ class _AddButtonPageState extends State<AddButtonPage> {
       appBar: AppBar(
         title: const Text(
           "Add Habit",
-          style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
@@ -49,18 +80,36 @@ class _AddButtonPageState extends State<AddButtonPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Your Habits", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("Your Habits", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Expanded(
-              child: ListView.builder(
+              child: habits.isEmpty
+                  ? const Center(
+                child: Text("ยังไม่มี Habit โปรดกดปุ่ม + เพื่อเพิ่ม", style: TextStyle(fontSize: 16, color: Colors.grey)),
+              )
+                  : ListView.builder(
                 itemCount: habits.length,
                 itemBuilder: (context, index) {
-                  return HabitCard(
-                    icon: habits[index]["icon"],
-                    title: habits[index]["title"],
-                    progress: habits[index]["progress"],
-                    total: habits[index]["total"],
-                    unit: habits[index]["unit"],
+                  return Dismissible(
+                    key: Key(habits[index]["title"]),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white, size: 30),
+                    ),
+                    confirmDismiss: (direction) async {
+                      _confirmDeleteHabit(index);
+                      return false;
+                    },
+                    child: HabitCard(
+                      icon: habits[index]["icon"],
+                      title: habits[index]["title"],
+                      progress: habits[index]["progress"],
+                      total: habits[index]["total"],
+                      unit: habits[index]["unit"],
+                    ),
                   );
                 },
               ),
@@ -149,6 +198,7 @@ class _AddButtonPageState extends State<AddButtonPage> {
   }
 }
 
+// ✅ Habit Card (ไม่มีปุ่มลบ เพราะใช้ Swipe ลบแทน)
 class HabitCard extends StatelessWidget {
   final IconData icon;
   final String title;
