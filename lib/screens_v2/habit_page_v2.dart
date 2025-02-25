@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'activity_screens/run_page.dart';
 import 'activity_screens/walk_page.dart';
 import 'activity_screens/workout_page.dart';
+import 'package:ticktick/screens_v2/notification_page.dart';
+import 'package:ticktick/screens_v2/accont_page.dart';
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;
@@ -77,10 +79,24 @@ class HabitPage extends StatelessWidget {
           unselectedItemColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
+          currentIndex: 0,
+          onTap: (index) {
+            if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
+              );
+            } else if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AccountScreen()),
+              );
+            }
+          },
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""),
             BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: ""), //
             BottomNavigationBarItem(icon: Icon(Icons.nightlight_round), label: ""),
           ],
         ),
