@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ticktick/screens_v2/notification_page.dart'; // ✅ ไปหน้า Notification
-import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit; // ✅ ไปหน้า Habit
-import 'package:ticktick/screens_v2/accont_page.dart'; // ✅ ไปหน้า Account
+import 'package:ticktick/screens_v2/notification_page.dart'; // หน้า Notification
+import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit; // หน้า Habit
+import 'package:ticktick/screens_v2/accont_page.dart'; //  หน้า Account
 
 class AddButtonPage extends StatelessWidget {
   const AddButtonPage({super.key});
@@ -13,9 +13,9 @@ class AddButtonPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Add Habit",
-          style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
@@ -42,19 +42,19 @@ class AddButtonPage extends StatelessWidget {
         unselectedItemColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        currentIndex: 0, // ✅ ตั้งค่าให้ "Favorite" เป็นหน้าปัจจุบัน
+        currentIndex: 0, //  ตั้งให้ "Favorite" เป็นหน้าปัจจุบัน
         onTap: (index) {
-          if (index == 1) { // ✅ กด "Notifications" ไปหน้า Notification
+          if (index == 1) { //  กด "Notifications" ไปหน้า Notification
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NotificationsPage()),
             );
-          } else if (index == 2) { // ✅ กด "Person" ไปหน้า Account
+          } else if (index == 2) { //  กด "Person" ไปหน้า Account
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AccountScreen()),
             );
-          } else if (index == 0) { // ✅ กด "Favorite" กลับไปหน้า Habit
+          } else if (index == 0) { //  กด "Favorite" กลับไปหน้า Habit
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => habit.HabitPage(isDarkMode: false, onThemeChanged: (value) {})),
@@ -62,9 +62,9 @@ class AddButtonPage extends StatelessWidget {
           }
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""), // ✅ กดกลับไปหน้า Habit
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ""), // ✅ ไปหน้า Notification
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""), // ✅ ไปหน้า Account
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""), //  กดกลับไปหน้า Habit
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ""), //  ไปหน้า Notification
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""), //  ไปหน้า Account
           BottomNavigationBarItem(icon: Icon(Icons.nightlight_round), label: ""),
         ],
       ),
