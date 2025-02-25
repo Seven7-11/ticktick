@@ -77,8 +77,8 @@ class AccountScreen extends StatelessWidget {
             const SizedBox(height: 30),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow,
-                foregroundColor: Colors.black,
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
