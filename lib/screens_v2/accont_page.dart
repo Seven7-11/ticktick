@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ticktick/screens_v2/notification_page.dart'; // ✅ Import หน้า Notification
-import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit; // ✅ Import หน้า Habit
+import 'package:ticktick/screens_v2/notification_page.dart'; // ✅ ไปหน้า Notification
+import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit; // ✅ ไปหน้า Habit
+import 'package:ticktick/login_page_v2.dart'; // ✅ Import หน้า Login
 
 void main() {
   runApp(const MyApp());
@@ -32,12 +33,12 @@ class AccountScreen extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         currentIndex: 2, // ✅ ตั้งค่าให้ไอคอน "Person" เป็นหน้าปัจจุบัน
         onTap: (index) {
-          if (index == 0) { // ✅ กด "Favorite" แล้วไปหน้า HabitPage
+          if (index == 0) { // ✅ กด "Favorite" ไปหน้า HabitPage
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => habit.HabitPage(isDarkMode: false, onThemeChanged: (value) {})),
             );
-          } else if (index == 1) { // ✅ กด "Notifications" แล้วไปหน้า NotificationPage
+          } else if (index == 1) { // ✅ กด "Notifications" ไปหน้า NotificationPage
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NotificationsPage()),
@@ -84,7 +85,19 @@ class AccountScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                // ✅ กลับไปหน้า Login เมื่อกด Log Out
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(
+                      isDarkMode: false,
+                      onThemeChanged: (bool value) {},
+                    ),
+                  ),
+                      (route) => false, // ✅ ลบ Stack ของหน้าก่อนหน้าออกทั้งหมด
+                );
+              },
               child: const Text('Log Out'),
             ),
           ],
