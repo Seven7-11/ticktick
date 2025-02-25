@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'activity_screens/run_page.dart';
+import 'activity_screens/walk_page.dart';
+import 'activity_screens/workout_page.dart';
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;
@@ -29,10 +32,25 @@ class HabitPage extends StatelessWidget {
             const SizedBox(height: 10),
             Expanded(
               child: ListView(
-                children: const [
-                  ActivityCard(icon: Icons.directions_run, title: "Run", progress: 2.5, total: 5, unit: "km"),
-                  ActivityCard(icon: Icons.fitness_center, title: "Work-out", progress: 2.5, total: 5, unit: "Hr"),
-                  ActivityCard(icon: Icons.directions_walk, title: "Walk", progress: 2.5, total: 5, unit: "Hr"),
+                children: [
+                  ActivityCard(icon: Icons.directions_run, title: "Run", progress: 2.5, total: 5, unit: "km", onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RunPage()),
+                    );
+                  }),
+                  ActivityCard(icon: Icons.fitness_center, title: "Work-out", progress: 2.5, total: 5, unit: "Hr", onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => WorkoutPage()),
+                    );
+                  }),
+                  ActivityCard(icon: Icons.directions_walk, title: "Walk", progress: 2.5, total: 5, unit: "Hr", onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => WalkPage()),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -77,6 +95,7 @@ class ActivityCard extends StatelessWidget {
   final double progress;
   final double total;
   final String unit;
+  final VoidCallback? onTap;
 
   const ActivityCard({
     super.key,
@@ -85,38 +104,42 @@ class ActivityCard extends StatelessWidget {
     required this.progress,
     required this.total,
     required this.unit,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.black,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 40),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("$progress / $total $unit", style: const TextStyle(color: Colors.amber, fontSize: 14)),
-                  const SizedBox(height: 5),
-                  LinearProgressIndicator(
-                    value: progress / total,
-                    backgroundColor: Colors.grey,
-                    color: Colors.amber,
-                  ),
-                ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 40),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text("$progress / $total $unit", style: const TextStyle(color: Colors.amber, fontSize: 14)),
+                    const SizedBox(height: 5),
+                    LinearProgressIndicator(
+                      value: progress / total,
+                      backgroundColor: Colors.grey,
+                      color: Colors.amber,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text("10.50 AM", style: TextStyle(color: Colors.white, fontSize: 14)),
-          ],
+              const SizedBox(width: 10),
+              const Text("10.50 AM", style: TextStyle(color: Colors.white, fontSize: 14)),
+            ],
+          ),
         ),
       ),
     );
