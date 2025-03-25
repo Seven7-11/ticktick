@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
 
@@ -11,49 +12,101 @@ class SignUpPage extends StatelessWidget {
   });
 
   @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _repeatPasswordController = TextEditingController();
+
+  bool isLoading = false;
+
+  void signUp() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final repeatPassword = _repeatPasswordController.text.trim();
+
+    if (password != repeatPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("รหัสผ่านไม่ตรงกัน")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final auth = FirebaseAuth.instance;
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await userCredential.user!.sendEmailVerification();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ ส่งอีเมลยืนยันแล้ว กรุณาเช็กเมล")),
+      );
+
+      Navigator.pop(context); // กลับหน้า Login
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("เกิดข้อผิดพลาด: $e")),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Sign Up")),
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // ✅ รองรับ Dark Mode
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('images/dairy.png', height: 200),
-            const SizedBox(height: 20),
-            buildTextField("Username", Icons.person),
-            const SizedBox(height: 10),
-            buildTextField("Email", Icons.email),
-            const SizedBox(height: 10),
-            buildTextField("Password", Icons.lock, isPassword: true),
-            const SizedBox(height: 10),
-            buildTextField("Repeat Password", Icons.lock, isPassword: true),
-            const SizedBox(height: 20),
-            buildButton("Sign Up", Colors.amber, () {
-              Navigator.pop(context); // ✅ กด Sign Up แล้วกลับไปหน้า Login
-            }),
-            const SizedBox(height: 20),
-            const Text("Or sign in with:"),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildSocialIcon("images/apple.png"),
-                buildSocialIcon("images/fb.webp"),
-                buildSocialIcon("images/goo.png"),
-              ],
-            ),
-            const SizedBox(height: 30),
-            buildThemeToggle(), // ✅ ปุ่มสลับโหมด Dark/Light
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('images/dairy.png', height: 180),
+              const SizedBox(height: 20),
+              buildTextField("Email", Icons.email, controller: _emailController),
+              const SizedBox(height: 10),
+              buildTextField("Password", Icons.lock,
+                  controller: _passwordController, isPassword: true),
+              const SizedBox(height: 10),
+              buildTextField("Repeat Password", Icons.lock,
+                  controller: _repeatPasswordController, isPassword: true),
+              const SizedBox(height: 20),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : buildButton("Sign Up", Colors.amber, signUp),
+              const SizedBox(height: 20),
+              const Text("Or sign in with:"),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildSocialIcon("images/apple.png"),
+                  buildSocialIcon("images/fb.webp"),
+                  buildSocialIcon("images/goo.png"),
+                ],
+              ),
+              const SizedBox(height: 30),
+              buildThemeToggle(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildTextField(String hintText, IconData icon, {bool isPassword = false}) {
+  Widget buildTextField(String hintText, IconData icon,
+      {bool isPassword = false, TextEditingController? controller}) {
     return TextField(
+      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         prefixIcon: Icon(icon),
@@ -88,11 +141,11 @@ class SignUpPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        buildThemeButton("☀️ Light Mode", !isDarkMode, () {
-          onThemeChanged(false);
+        buildThemeButton("☀️ Light Mode", !widget.isDarkMode, () {
+          widget.onThemeChanged(false);
         }),
-        buildThemeButton("🌙 Dark Mode", isDarkMode, () {
-          onThemeChanged(true);
+        buildThemeButton("🌙 Dark Mode", widget.isDarkMode, () {
+          widget.onThemeChanged(true);
         }),
       ],
     );
@@ -103,17 +156,13 @@ class SignUpPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.amber : Colors.grey[700], // ✅ เปลี่ยนสีปุ่ม
-          foregroundColor: isSelected ? Colors.black : Colors.white, // ✅ เปลี่ยนสีตัวอักษร
+          backgroundColor: isSelected ? Colors.amber : Colors.grey[700],
+          foregroundColor: isSelected ? Colors.black : Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          splashFactory: InkSplash.splashFactory, // ✅ เพิ่มเอฟเฟกต์กดปุ่ม
         ),
         onPressed: onPressed,
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        child: Text(text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }

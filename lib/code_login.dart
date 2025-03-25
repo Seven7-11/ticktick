@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
-import 'package:ticktick/screens_v2/habit_page_v2.dart';
-import 'package:ticktick/screens_v2/forgot_password_page.dart';
 import 'package:ticktick/screens_v2/singup_page_v2.dart';
+import 'package:ticktick/screens_v2/habit_page_v2.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,9 +54,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -67,44 +63,23 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 40), // เว้นหัวเพื่อให้ scroll ได้สวยขึ้น
               Image.asset('images/dairy.png', height: 200),
               const SizedBox(height: 20),
-              buildTextField("Email", Icons.person, controller: emailController),
+              buildTextField("Username", Icons.person),
               const SizedBox(height: 10),
-              buildTextField("Password", Icons.lock, isPassword: true, controller: passwordController),
+              buildTextField("Password", Icons.lock, isPassword: true),
               const SizedBox(height: 20),
-              buildButton("Login", Colors.amber, () async {
-                final email = emailController.text.trim();
-                final password = passwordController.text.trim();
-
-                if (email.isEmpty || password.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("กรุณากรอกอีเมลและรหัสผาน")),
-                  );
-                  return;
-                }
-
-                try {
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: email,
-                    password: password,
-                  );
-
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HabitPage(
-                        isDarkMode: isDarkMode,
-                        onThemeChanged: onThemeChanged,
-                      ),
+              buildButton("Login", Colors.amber, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HabitPage(
+                      isDarkMode: isDarkMode,
+                      onThemeChanged: onThemeChanged,
                     ),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("เข้าสู่ระบบล้มเหลว: $e")),
-                  );
-                }
+                  ),
+                );
               }),
               const SizedBox(height: 10),
               TextButton(
@@ -122,17 +97,7 @@ class LoginPage extends StatelessWidget {
                 child: const Text("Sign Up", style: TextStyle(fontSize: 16)),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ForgotPasswordPage(
-                        isDarkMode: isDarkMode,
-                        onThemeChanged: onThemeChanged,
-                      ),
-                    ),
-                  );
-                },
+                onPressed: () {},
                 child: const Text("Forgot Password?", style: TextStyle(fontSize: 14)),
               ),
               const SizedBox(height: 20),
@@ -146,7 +111,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               buildThemeToggle(),
-              const SizedBox(height: 30),
+              const SizedBox(height: 40), // เพิ่ม padding ล่าง
             ],
           ),
         ),
@@ -154,9 +119,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget buildTextField(String hintText, IconData icon, {bool isPassword = false, TextEditingController? controller}) {
+  Widget buildTextField(String hintText, IconData icon, {bool isPassword = false}) {
     return TextField(
-      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         prefixIcon: Icon(icon),

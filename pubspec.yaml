@@ -31,9 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
   fl_chart: ^0.63.0
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.13.5
+  image_picker: ^1.0.4
 
-chakkapat_widgets_exercises:
-  path: C:\Users\User\Desktop\Work\Flutter\Seven-1671-Flutter-labs\chakkapat_widgets_exercises
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

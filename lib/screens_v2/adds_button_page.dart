@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit;
-import 'package:ticktick/screens_v2/accont_page.dart';
+import 'package:ticktick/screens_v2/account_page.dart';
 
 class AddButtonPage extends StatefulWidget {
   const AddButtonPage({super.key});
@@ -11,9 +11,8 @@ class AddButtonPage extends StatefulWidget {
 }
 
 class _AddButtonPageState extends State<AddButtonPage> {
-  List<Map<String, dynamic>> habits = []; // ✅ เริ่มต้นไม่มี Habit
+  List<Map<String, dynamic>> habits = [];
 
-  // ✅ ฟังก์ชันเพิ่ม Habit ใหม่ลงใน List
   void _addHabit(String title) {
     setState(() {
       habits.add({
@@ -26,7 +25,6 @@ class _AddButtonPageState extends State<AddButtonPage> {
     });
   }
 
-  // ✅ ฟังก์ชันแสดง Dialog ยืนยันการลบ
   void _confirmDeleteHabit(int index) {
     showDialog(
       context: context,
@@ -36,15 +34,13 @@ class _AddButtonPageState extends State<AddButtonPage> {
           content: const Text("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?"),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context); // ❌ ปิด Dialog ถ้ากด "ยกเลิก"
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text("ยกเลิก"),
             ),
             ElevatedButton(
               onPressed: () {
-                _deleteHabit(index); // ✅ ลบ Habit
-                Navigator.pop(context); // ✅ ปิด Dialog หลังลบ
+                _deleteHabit(index);
+                Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text("ลบ", style: TextStyle(color: Colors.white)),
@@ -55,7 +51,6 @@ class _AddButtonPageState extends State<AddButtonPage> {
     );
   }
 
-  // ✅ ฟังก์ชันลบ Habit
   void _deleteHabit(int index) {
     setState(() {
       habits.removeAt(index);
@@ -74,6 +69,7 @@ class _AddButtonPageState extends State<AddButtonPage> {
         backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -85,7 +81,10 @@ class _AddButtonPageState extends State<AddButtonPage> {
             Expanded(
               child: habits.isEmpty
                   ? const Center(
-                child: Text("ยังไม่มี Habit โปรดกดปุ่ม + เพื่อเพิ่ม", style: TextStyle(fontSize: 16, color: Colors.grey)),
+                child: Text(
+                  "ยังไม่มี Habit โปรดกดปุ่ม + เพื่อเพิ่ม",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
               )
                   : ListView.builder(
                 itemCount: habits.length,
@@ -118,9 +117,7 @@ class _AddButtonPageState extends State<AddButtonPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddHabitDialog(context);
-        },
+        onPressed: () => _showAddHabitDialog(context),
         backgroundColor: Colors.black,
         child: const Icon(Icons.add, color: Colors.white, size: 30),
       ),
@@ -133,19 +130,18 @@ class _AddButtonPageState extends State<AddButtonPage> {
         currentIndex: 0,
         onTap: (index) {
           if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationsPage()),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsPage()));
           } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AccountScreen()),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
           } else if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => habit.HabitPage(isDarkMode: false, onThemeChanged: (value) {})),
+              MaterialPageRoute(
+                builder: (context) => habit.HabitPage(
+                  isDarkMode: false,
+                  onThemeChanged: (value) {},
+                ),
+              ),
             );
           }
         },
@@ -159,46 +155,61 @@ class _AddButtonPageState extends State<AddButtonPage> {
     );
   }
 
-  // ✅ ฟังก์ชันเปิด Dialog เพิ่ม Habit
   void _showAddHabitDialog(BuildContext context) {
     TextEditingController habitController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Add Habit"),
-          content: TextField(
-            controller: habitController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Enter Habit",
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: Colors.grey[200],
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Add Habit",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: habitController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Enter Habit",
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (habitController.text.isNotEmpty) {
+                          _addHabit(habitController.text);
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Submit"),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (habitController.text.isNotEmpty) {
-                  _addHabit(habitController.text);
-                }
-                Navigator.pop(context);
-              },
-              child: const Text("Submit"),
-            ),
-          ],
         );
       },
     );
   }
 }
 
-// ✅ Habit Card (ไม่มีปุ่มลบ เพราะใช้ Swipe ลบแทน)
 class HabitCard extends StatelessWidget {
   final IconData icon;
   final String title;

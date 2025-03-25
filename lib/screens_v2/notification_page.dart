@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit; // ✅ Import Habit Page
-import 'package:ticktick/screens_v2/accont_page.dart'; // ✅ Import Account Page
+import 'package:ticktick/screens_v2/account_page.dart'; // ✅ Import Account Page
 
 class NotificationsPage extends StatelessWidget {
   @override
@@ -11,6 +11,7 @@ class NotificationsPage extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.white,
       body: Padding(

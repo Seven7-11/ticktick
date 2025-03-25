@@ -3,7 +3,7 @@ import 'activity_screens/run_page.dart';
 import 'activity_screens/walk_page.dart';
 import 'activity_screens/workout_page.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
-import 'package:ticktick/screens_v2/accont_page.dart';
+import 'package:ticktick/screens_v2/account_page.dart';
 import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Import หน้า Add Habit
 
 class HabitPage extends StatelessWidget {
