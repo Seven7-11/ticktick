@@ -42,10 +42,14 @@ class WorkoutDetailPage extends StatelessWidget {
     ],
   };
 
-  void _launchVideo(String url) async {
+  void _launchVideo(String url, BuildContext context) async {
     final Uri videoUri = Uri.parse(url);
     if (await canLaunchUrl(videoUri)) {
-      await launchUrl(videoUri, mode: LaunchMode.externalApplication);
+      await launchUrl(videoUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("ไม่สามารถเปิดวิดีโอบนอุปกรณ์นี้ได้")),
+      );
     }
   }
 
@@ -61,15 +65,27 @@ class WorkoutDetailPage extends StatelessWidget {
         itemCount: exercises.length,
         itemBuilder: (context, index) {
           final exercise = exercises[index];
-          return ListTile(
-            title: Text(exercise['name']!),
-            trailing: IconButton(
-              icon: const Icon(Icons.play_circle_fill, color: Colors.redAccent),
-              onPressed: () {
-                if (exercise['url'] != null && exercise['url']!.isNotEmpty) {
-                  _launchVideo(exercise['url']!);
-                }
-              },
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  exercise['name']!,
+                  style: const TextStyle(fontSize: 24, color: Colors.white),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.play_circle_fill, color: Colors.redAccent, size: 28),
+                  onPressed: () {
+                    _launchVideo(exercise['url']!, context);
+                  },
+                ),
+              ],
             ),
           );
         },
