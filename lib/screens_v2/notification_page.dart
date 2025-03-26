@@ -1,148 +1,179 @@
 import 'package:flutter/material.dart';
-import '../screens_v2/habit_page_v2.dart' as habit;
-import '../screens_v2/account_page.dart';
 
+class NotificationItem {
+  String title;
+  TimeOfDay time;
+  bool isActive;
 
-class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          "Notifications",
-          style: TextStyle(
-            color: Colors.black, //
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Activity",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 16),
-            NotificationCard(
-              icon: Icons.directions_run,
-              title: "Run",
-              time: "10:30",
-            ),
-            NotificationCard(
-              icon: Icons.fitness_center,
-              title: "Gym",
-              time: "13:00",
-            ),
-            NotificationCard(
-              icon: Icons.directions_walk,
-              title: "Walk",
-              time: "05:30",
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NotificationCard extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String time;
-
-  const NotificationCard({
-    super.key,
-    required this.icon,
+  NotificationItem({
     required this.title,
     required this.time,
+    this.isActive = true,
   });
-
-  @override
-  State<NotificationCard> createState() => _NotificationCardState();
 }
 
-class _NotificationCardState extends State<NotificationCard> {
-  bool isSwitched = true;
-  String selectedTime = "";
+class NotificationsPage extends StatefulWidget {
+  const NotificationsPage({Key? key}) : super(key: key);
 
   @override
-  void initState() {
-    super.initState();
-    selectedTime = widget.time;
-  }
+  State<NotificationsPage> createState() => _NotificationPageState();
+}
 
-  Future<void> _pickTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+class _NotificationPageState extends State<NotificationsPage> {
+  List<NotificationItem> _items = [
+    NotificationItem(title: "Run", time: TimeOfDay(hour: 10, minute: 30)),
+    NotificationItem(title: "Gym", time: TimeOfDay(hour: 13, minute: 0)),
+    NotificationItem(title: "Walk", time: TimeOfDay(hour: 5, minute: 30)),
+  ];
+
+  Future<void> _confirmDelete(int index) async {
+    final confirm = await showDialog<bool>(
       context: context,
-      initialTime: TimeOfDay(
-        hour: int.tryParse(widget.time.split(":")[0]) ?? 10,
-        minute: int.tryParse(widget.time.split(":")[1]) ?? 30,
+      builder: (_) => AlertDialog(
+        title: const Text("ยืนยันการลบ"),
+        content: Text("คุณแน่ใจหรือไม่ที่จะลบ ${_items[index].title}?"),
+        actions: [
+          TextButton(
+            child: const Text("ยกเลิก"),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          ElevatedButton(
+            child: const Text("ลบ"),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
       ),
     );
-    if (picked != null) {
+
+    if (confirm == true) {
       setState(() {
-        selectedTime = picked.format(context);
+        _items.removeAt(index);
       });
     }
   }
 
+  void _showAddNotificationDialog() async {
+    String newTitle = '';
+    TimeOfDay selectedTime = TimeOfDay.now();
+
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text('เพิ่มกิจกรรม'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                autofocus: true,
+                decoration: const InputDecoration(labelText: 'ชื่อกิจกรรม'),
+                onChanged: (value) {
+                  newTitle = value;
+                },
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final TimeOfDay? picked = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime,
+                  );
+                  if (picked != null) {
+                    selectedTime = picked;
+                  }
+                },
+                icon: const Icon(Icons.access_time),
+                label: const Text("เลือกเวลา"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('ยกเลิก'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (newTitle.trim().isNotEmpty) {
+                  setState(() {
+                    _items.add(NotificationItem(title: newTitle, time: selectedTime));
+                  });
+                }
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              child: const Text('เพิ่ม'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Notifications")),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Activity", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _items.length,
+                itemBuilder: (_, index) {
+                  final item = _items[index];
+                  return Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      color: Colors.red,
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    confirmDismiss: (_) async {
+                      await _confirmDelete(index);
+                      return false;
+                    },
+                    child: Card(
+                      color: Colors.black,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: ListTile(
+                        leading: const Icon(Icons.directions_run, color: Colors.white),
+                        title: Text(item.title, style: const TextStyle(color: Colors.white, fontSize: 30)),
+                        subtitle: Text(
+                          item.time.format(context),
+                          style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+                        ),
+                        trailing: Switch(
+                          value: item.isActive,
+                          onChanged: (value) {
+                            setState(() {
+                              item.isActive = value;
+                            });
+                          },
+                          activeColor: Colors.amber,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        children: [
-          Icon(widget.icon, size: 32, color: Colors.white),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              widget.title,
-              style: const TextStyle(fontSize: 18, color: Colors.white),
-            ),
-          ),
-          InkWell(
-            onTap: () => _pickTime(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                selectedTime,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Switch(
-            value: isSwitched,
-            onChanged: (value) {
-              setState(() => isSwitched = value);
-            },
-            activeColor: Colors.amber,
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add),
+        onPressed: _showAddNotificationDialog,
       ),
     );
   }
