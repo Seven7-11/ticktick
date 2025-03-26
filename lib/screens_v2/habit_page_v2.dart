@@ -5,6 +5,8 @@ import 'activity_screens/workout_page.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/account_page.dart';
 import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Import หน้า Add Habit
+import 'package:ticktick/screens_v2/habit_model.dart'; // หรือปรับ path ให้ตรงกับโปรเจกต์คุณ
+
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;
@@ -39,7 +41,11 @@ class HabitPage extends StatelessWidget {
                   ActivityCard(icon: Icons.directions_run, title: "Run", progress: 2.5, total: 5, unit: "km", onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RunPage()),
+                      MaterialPageRoute(
+                        builder: (context) => RunPage(
+                          habit: Habit(name: "Run", unit: "km", total: 5, progress: 2.5),
+                        ),
+                      ),
                     );
                   }),
                   ActivityCard(icon: Icons.fitness_center, title: "Work-out", progress: 2.5, total: 5, unit: "Hr", onTap: () {
