@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 import 'firebase_options.dart';
 import 'package:ticktick/screens_v2/habit_page_v2.dart';
 import 'package:ticktick/screens_v2/forgot_password_page.dart';
@@ -18,7 +20,7 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -33,10 +35,8 @@ class _MyAppState extends State<MyApp> {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: LoginPage(
         isDarkMode: isDarkMode,
-        onThemeChanged: (bool value) {
-          setState(() {
-            isDarkMode = value;
-          });
+        onThemeChanged: (value) {
+          setState(() => isDarkMode = value);
         },
       ),
     );
@@ -53,19 +53,48 @@ class LoginPage extends StatelessWidget {
     required this.onThemeChanged,
   });
 
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HabitPage(
+            isDarkMode: isDarkMode,
+            onThemeChanged: onThemeChanged,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Google Sign-In failed: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
               Image.asset('images/dairy.png', height: 200),
@@ -80,7 +109,7 @@ class LoginPage extends StatelessWidget {
 
                 if (email.isEmpty || password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("กรุณากรอกอีเมลและรหัสผาน")),
+                    const SnackBar(content: Text("กรุณากรอกอีเมลและรหัสผ่าน")),
                   );
                   return;
                 }
@@ -109,31 +138,25 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignUpPage(
-                        isDarkMode: isDarkMode,
-                        onThemeChanged: onThemeChanged,
-                      ),
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => SignUpPage(
+                      isDarkMode: isDarkMode,
+                      onThemeChanged: onThemeChanged,
                     ),
-                  );
+                  ));
                 },
-                child: const Text("Sign Up", style: TextStyle(fontSize: 16)),
+                child: const Text("Sign Up"),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ForgotPasswordPage(
-                        isDarkMode: isDarkMode,
-                        onThemeChanged: onThemeChanged,
-                      ),
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => ForgotPasswordPage(
+                      isDarkMode: isDarkMode,
+                      onThemeChanged: onThemeChanged,
                     ),
-                  );
+                  ));
                 },
-                child: const Text("Forgot Password?", style: TextStyle(fontSize: 14)),
+                child: const Text("Forgot Password?"),
               ),
               const SizedBox(height: 20),
               Row(
@@ -141,7 +164,12 @@ class LoginPage extends StatelessWidget {
                 children: [
                   Expanded(child: buildSocialIcon("images/apple.png")),
                   Expanded(child: buildSocialIcon("images/fb.webp")),
-                  Expanded(child: buildSocialIcon("images/goo.png")),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _signInWithGoogle(context),
+                      child: buildSocialIcon("images/goo.png"),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),

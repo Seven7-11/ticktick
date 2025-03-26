@@ -4,8 +4,9 @@ import 'activity_screens/walk_page.dart';
 import 'activity_screens/workout_page.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/account_page.dart';
-import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Import หน้า Add Habit
+import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Add Habit Page
 import 'package:ticktick/screens_v2/habit_model.dart';
+import 'package:ticktick/screens_v2/display_mode_page.dart'; // ✅ Display Mode Page
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;
@@ -37,28 +38,49 @@ class HabitPage extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  ActivityCard(icon: Icons.directions_run, title: "Run", progress: 2.5, total: 5, unit: "km", onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RunPage(
-                          habit: Habit(name: "Run", unit: "km", total: 5, progress: 2.5),
+                  ActivityCard(
+                    icon: Icons.directions_run,
+                    title: "Run",
+                    progress: 2.5,
+                    total: 5,
+                    unit: "km",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RunPage(
+                            habit: Habit(name: "Run", unit: "km", total: 5, progress: 2.5),
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                  ActivityCard(icon: Icons.fitness_center, title: "Work-out", progress: 2.5, total: 5, unit: "Hr", onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WorkoutPage()),
-                    );
-                  }),
-                  ActivityCard(icon: Icons.directions_walk, title: "Walk", progress: 2.5, total: 5, unit: "Hr", onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WalkPage()),
-                    );
-                  }),
+                      );
+                    },
+                  ),
+                  ActivityCard(
+                    icon: Icons.fitness_center,
+                    title: "Work-out",
+                    progress: 2.5,
+                    total: 5,
+                    unit: "Hr",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WorkoutPage()),
+                      );
+                    },
+                  ),
+                  ActivityCard(
+                    icon: Icons.directions_walk,
+                    title: "Walk",
+                    progress: 2.5,
+                    total: 5,
+                    unit: "Hr",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WalkPage()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -66,7 +88,7 @@ class HabitPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () { // ✅ กดปุ่ม + แล้วไปที่ Add Habit Page
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddButtonPage()),
@@ -92,22 +114,32 @@ class HabitPage extends StatelessWidget {
           elevation: 0,
           currentIndex: 0,
           onTap: (index) {
-            if (index == 1) { // ✅ กด "Notifications" ไปหน้า Notification
+            if (index == 1) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
-            } else if (index == 2) { // ✅ กด "Person" ไปหน้า Account
+            } else if (index == 2) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AccountScreen()),
+              );
+            } else if (index == 3) { // ✅ Display mode
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DisplayModePage(
+                    isDarkMode: isDarkMode,
+                    onThemeChanged: onThemeChanged,
+                  ),
+                ),
               );
             }
           },
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""),
             BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: ""), //
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
             BottomNavigationBarItem(icon: Icon(Icons.nightlight_round), label: ""),
           ],
         ),

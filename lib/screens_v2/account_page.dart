@@ -45,11 +45,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: textColor,
         title: const Text('My Profile', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
@@ -61,27 +64,27 @@ class _AccountScreenState extends State<AccountScreen> {
               onTap: _pickImage,
               child: CircleAvatar(
                 radius: 48,
-                backgroundColor: Colors.white24,
+                backgroundColor: Colors.black12,
                 backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                 child: _imageFile == null
-                    ? const Icon(Icons.person, size: 50, color: Colors.black)
+                    ? Icon(Icons.person, size: 50, color: textColor)
                     : null,
               ),
             ),
             const SizedBox(height: 16),
             Card(
-              color: Colors.white10,
+              color: Colors.black,
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 12),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _buildInfoRow(Icons.person, 'Display Name', _displayName, _nameController),
+                    _buildInfoRow(Icons.person, 'Display Name', _displayName, _nameController, textColor),
                     const SizedBox(height: 16),
-                    _buildInfoRow(Icons.email, 'Email Address', email),
+                    _buildInfoRow(Icons.email, 'Email Address', email, null, textColor),
                     const SizedBox(height: 16),
-                    _buildInfoRow(Icons.info_outline, 'Short Bio', _bio, _bioController),
+                    _buildInfoRow(Icons.info_outline, 'Short Bio', _bio, _bioController, textColor),
                   ],
                 ),
               ),
@@ -139,7 +142,13 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, [TextEditingController? controller]) {
+  Widget _buildInfoRow(
+      IconData icon,
+      String label,
+      String value,
+      [TextEditingController? controller,
+        Color? textColor]
+      ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,7 +173,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
               )
-                  : Text(value, style: const TextStyle(color: Colors.white, fontSize: 16)),
+                  : Text(value, style: TextStyle(color: textColor ?? Colors.white, fontSize: 16)),
             ],
           ),
         ),
