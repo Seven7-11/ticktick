@@ -5,9 +5,7 @@ import 'activity_screens/workout_page.dart';
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/account_page.dart';
 import 'package:ticktick/screens_v2/adds_button_page.dart'; // ✅ Import หน้า Add Habit
-import 'package:ticktick/screens_v2/habit_model.dart'; // หรือปรับ path ให้ตรงกับโปรเจกต์คุณ
-
-
+import 'package:ticktick/screens_v2/habit_model.dart';
 
 class HabitPage extends StatelessWidget {
   final bool isDarkMode;

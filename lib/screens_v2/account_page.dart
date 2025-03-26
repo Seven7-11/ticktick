@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
 import 'package:ticktick/screens_v2/notification_page.dart';
 import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit;
 import 'package:ticktick/login_page_v2.dart';
@@ -56,7 +55,7 @@ class _AccountScreenState extends State<AccountScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF8E24AA),
+        backgroundColor:Colors.black,
       ),
       backgroundColor: Colors.white,
       body: Center(
@@ -72,7 +71,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     radius: 50,
                     backgroundImage: _profileImage != null
                         ? FileImage(_profileImage!)
-                        : const AssetImage('images/chakkapat.png') as ImageProvider,
+                        : const AssetImage('images/user.png') as ImageProvider,
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

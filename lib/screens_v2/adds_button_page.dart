@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ticktick/screens_v2/notification_page.dart';
+
 import 'package:ticktick/screens_v2/habit_page_v2.dart' as habit;
 import 'package:ticktick/screens_v2/account_page.dart';
+import 'package:ticktick/screens_v2/notification_page.dart';
+
+import 'notification_page.dart';
 
 class AddButtonPage extends StatefulWidget {
   const AddButtonPage({super.key});
