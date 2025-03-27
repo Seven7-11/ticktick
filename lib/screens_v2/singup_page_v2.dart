@@ -95,7 +95,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 ],
               ),
               const SizedBox(height: 30),
-              buildThemeToggle(),
             ],
           ),
         ),
@@ -134,36 +133,6 @@ class _SignUpPageState extends State<SignUpPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Image.asset(assetPath, height: 40),
-    );
-  }
-
-  Widget buildThemeToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildThemeButton("☀️ Light Mode", !widget.isDarkMode, () {
-          widget.onThemeChanged(false);
-        }),
-        buildThemeButton("🌙 Dark Mode", widget.isDarkMode, () {
-          widget.onThemeChanged(true);
-        }),
-      ],
-    );
-  }
-
-  Widget buildThemeButton(String text, bool isSelected, VoidCallback onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.amber : Colors.grey[700],
-          foregroundColor: isSelected ? Colors.black : Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        onPressed: onPressed,
-        child: Text(text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      ),
     );
   }
 }

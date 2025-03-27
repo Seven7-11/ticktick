@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   void _updateTheme(bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', value); // ✅ บันทึกค่าธีม
+    await prefs.setBool('isDarkMode', value);
 
     setState(() {
       _isDarkMode = value;
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: HabitPage(
         isDarkMode: _isDarkMode,
-        onThemeChanged: _updateTheme, // ✅ เรียก method ที่บันทึก
+        onThemeChanged: _updateTheme,
       ),
     );
   }
