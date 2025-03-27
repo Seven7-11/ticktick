@@ -22,13 +22,14 @@ class _DisplayModePageState extends State<DisplayModePage> {
   void initState() {
     super.initState();
     _loadThemePref();
+
   }
 
-  void _loadThemePref() async {
+  void _loadThemePref() async{
     final prefs = await SharedPreferences.getInstance();
     final isDark = prefs.getBool("isDarkMode");
 
-    if (isDark != null) {
+    if (isDark != null){
       setState(() {
         _selectedDarkMode = isDark;
       });
@@ -38,7 +39,7 @@ class _DisplayModePageState extends State<DisplayModePage> {
   void _updateTheme(bool isDark) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool("isDarkMode", isDark);
-    debugPrint("isDark \$isDark");
+    debugPrint("isDark ${isDark}");
     widget.onThemeChanged(isDark);
     setState(() {
       _selectedDarkMode = isDark;
@@ -51,45 +52,31 @@ class _DisplayModePageState extends State<DisplayModePage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: 90, //
-        padding: const EdgeInsets.symmetric(vertical: 12), //
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.amber.withOpacity(0.1) : Colors.transparent,
-          border: Border.all(
-            color: isSelected ? Colors.amber : Colors.grey,
-            width: 2,
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.amber.withOpacity(0.1) : Colors.transparent,
+        foregroundColor: isSelected ? Colors.amber : Colors.grey,
+        side: BorderSide(color: isSelected ? Colors.amber : Colors.grey, width: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: isSelected ? 3 : 0,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 28),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 14)),
+          const SizedBox(height: 16),
+          Icon(
+            Icons.check_circle,
+            size: 20,
+            color: isSelected ? Colors.amber : Colors.transparent,
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 24, color: isSelected ? Colors.amber : Colors.grey),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                color: isSelected ? Colors.amber : Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Icon(
-              Icons.check_circle,
-              size: 14,
-              color: isSelected ? Colors.amber : Colors.transparent,
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

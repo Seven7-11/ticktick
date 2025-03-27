@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -25,9 +26,31 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedTheme = prefs.getBool("isDarkMode") ?? false;
+    setState(() {
+      isDarkMode = savedTheme;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
@@ -35,13 +58,16 @@ class _MyAppState extends State<MyApp> {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: LoginPage(
         isDarkMode: isDarkMode,
-        onThemeChanged: (value) {
+        onThemeChanged: (value) async {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool("isDarkMode", value);
           setState(() => isDarkMode = value);
         },
       ),
     );
   }
 }
+
 
 class LoginPage extends StatelessWidget {
   final bool isDarkMode;
@@ -56,11 +82,9 @@ class LoginPage extends StatelessWidget {
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
       if (googleUser == null) return;
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -173,7 +197,7 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 30),
-              buildThemeToggle(),
+              // buildThemeToggle(), //
               const SizedBox(height: 30),
             ],
           ),
@@ -212,39 +236,6 @@ class LoginPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Image.asset(assetPath, height: 40),
-    );
-  }
-
-  Widget buildThemeToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        buildThemeButton("☀️ Light Mode", !isDarkMode, () {
-          onThemeChanged(false);
-        }),
-        buildThemeButton("🌙 Dark Mode", isDarkMode, () {
-          onThemeChanged(true);
-        }),
-      ],
-    );
-  }
-
-  Widget buildThemeButton(String text, bool isSelected, VoidCallback onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.amber : Colors.grey[700],
-          foregroundColor: isSelected ? Colors.black : Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
     );
   }
 }
