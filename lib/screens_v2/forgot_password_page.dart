@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends StatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
 
@@ -9,6 +10,34 @@ class ForgotPasswordPage extends StatelessWidget {
     required this.isDarkMode,
     required this.onThemeChanged,
   });
+
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController emailController = TextEditingController();
+
+  Future<void> resetPassword() async {
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("กรุณากรอกอีเมล")),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("ส่งลิงก์เปลี่ยนรหัสผ่านเรียบร้อยแล้ว")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("ส่งลิงก์ล้มเหลว: $e")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +49,6 @@ class ForgotPasswordPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         foregroundColor: Colors.white,
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -35,6 +63,7 @@ class ForgotPasswordPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.email),
                 hintText: "Email",
@@ -49,12 +78,7 @@ class ForgotPasswordPage extends StatelessWidget {
                   backgroundColor: Colors.amber,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
-                  // TODO: Add reset password logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Password reset link sent")),
-                  );
-                },
+                onPressed: resetPassword,
                 child: const Text(
                   "Reset Password",
                   style: TextStyle(fontSize: 18, color: Colors.black),
