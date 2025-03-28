@@ -22,7 +22,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final email = emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("กรุณากรอกอีเมล")),
+        const SnackBar(content: Text("Please enter your email address.")),
       );
       return;
     }
@@ -30,11 +30,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("ส่งลิงก์เปลี่ยนรหัสผ่านเรียบร้อยแล้ว")),
+        const SnackBar(content: Text("Password change link has been sent.")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("ส่งลิงก์ล้มเหลว: $e")),
+        SnackBar(content: Text("Failed to send link: $e")),
       );
     }
   }

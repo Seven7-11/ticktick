@@ -133,7 +133,7 @@ class LoginPage extends StatelessWidget {
 
                 if (email.isEmpty || password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("กรุณากรอกอีเมลและรหัสผ่าน")),
+                    const SnackBar(content: Text("Please enter your email and password.")),
                   );
                   return;
                 }
@@ -155,7 +155,7 @@ class LoginPage extends StatelessWidget {
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("เข้าสู่ระบบล้มเหลว: $e")),
+                    SnackBar(content: Text("Login failed: $e")),
                   );
                 }
               }),

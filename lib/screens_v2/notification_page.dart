@@ -30,15 +30,15 @@ class _NotificationPageState extends State<NotificationsPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("ยืนยันการลบ"),
-        content: Text("คุณแน่ใจหรือไม่ที่จะลบ ${_items[index].title}?"),
+        title: const Text("! Warning"),
+        content: Text("Are you sure you want to delete this activity?  ${_items[index].title}?"),
         actions: [
           TextButton(
-            child: const Text("ยกเลิก"),
+            child: const Text("cancel"),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("ลบ"),
+            child: const Text("Delete"),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
           ),
@@ -61,13 +61,13 @@ class _NotificationPageState extends State<NotificationsPage> {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text('เพิ่มกิจกรรม'),
+          title: const Text('Add Habit'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 autofocus: true,
-                decoration: const InputDecoration(labelText: 'ชื่อกิจกรรม'),
+                decoration: const InputDecoration(labelText: 'Enter Habit'),
                 onChanged: (value) {
                   newTitle = value;
                 },
@@ -84,7 +84,7 @@ class _NotificationPageState extends State<NotificationsPage> {
                   }
                 },
                 icon: const Icon(Icons.access_time),
-                label: const Text("เลือกเวลา"),
+                label: const Text("Set Time"),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
               ),
             ],
@@ -92,7 +92,7 @@ class _NotificationPageState extends State<NotificationsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('ยกเลิก'),
+              child: const Text('cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -104,7 +104,7 @@ class _NotificationPageState extends State<NotificationsPage> {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-              child: const Text('เพิ่ม'),
+              child: const Text('Submit'),
             ),
           ],
         );

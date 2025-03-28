@@ -33,12 +33,12 @@ class _AddButtonPageState extends State<AddButtonPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("ยืนยันการลบ"),
-          content: const Text("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?"),
+          title: const Text("! Warning"),
+          content: const Text("Are you sure you want to delete this activity?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("ยกเลิก"),
+              child: const Text("cencel"),
             ),
             ElevatedButton(
               onPressed: () {
@@ -46,7 +46,7 @@ class _AddButtonPageState extends State<AddButtonPage> {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text("ลบ", style: TextStyle(color: Colors.white)),
+              child: const Text("Delete", style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -85,7 +85,7 @@ class _AddButtonPageState extends State<AddButtonPage> {
               child: habits.isEmpty
                   ? const Center(
                 child: Text(
-                  "ยังไม่มี Habit โปรดกดปุ่ม + เพื่อเพิ่ม",
+                  "Don't have a Habit yet? Click the + button to add one.",
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               )

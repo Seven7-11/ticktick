@@ -29,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (password != repeatPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("รหัสผ่านไม่ตรงกัน")),
+        const SnackBar(content: Text("Passwords do not match")),
       );
       return;
     }
@@ -46,13 +46,13 @@ class _SignUpPageState extends State<SignUpPage> {
       await userCredential.user!.sendEmailVerification();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ ส่งอีเมลยืนยันแล้ว กรุณาเช็กเมล")),
+        const SnackBar(content: Text("Confirmation email sent, please check your email.")),
       );
 
       Navigator.pop(context); // กลับหน้า Login
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("เกิดข้อผิดพลาด: $e")),
+        SnackBar(content: Text("An error occurred.: $e")),
       );
     } finally {
       setState(() => isLoading = false);
